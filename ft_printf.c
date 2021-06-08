@@ -6,7 +6,7 @@
 /*   By: taejkim <taejkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 12:09:47 by taejkim           #+#    #+#             */
-/*   Updated: 2021/06/08 13:16:13 by taejkim          ###   ########.fr       */
+/*   Updated: 2021/06/09 04:25:19 by taejkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	init_info(t_info *info)
 int		spec_print(va_list ap, t_info *info)
 {
 	int		ret;
-	char 	type;
+	char	type;
 
 	ret = -1;
 	type = info->type;
@@ -44,7 +44,7 @@ int		spec_print(va_list ap, t_info *info)
 	return (ret);
 }
 
-int		spec_check(char* format, va_list ap, char **next)
+int		spec_check(char *format, va_list ap, char **next)
 {
 	int		ret;
 	t_info	*info;
@@ -53,7 +53,7 @@ int		spec_check(char* format, va_list ap, char **next)
 		return (-1);
 	init_info(info);
 	while (*format)
-	{	
+	{
 		if (ft_strchr(TYPE, *format))
 		{
 			info->type = *format;
@@ -63,15 +63,15 @@ int		spec_check(char* format, va_list ap, char **next)
 			*next = format + 1;
 			return (ret);
 		}
-		else 
+		else
 			set_info(format, ap, info);
-		++format;	
+		++format;
 	}
 	free(info);
 	return (-1);
 }
 
-int		ft_printf(const char* format, ...)
+int		ft_printf(const char *format, ...)
 {
 	int		ret;
 	int		spec_print;
@@ -93,53 +93,8 @@ int		ft_printf(const char* format, ...)
 			}
 		}
 		else
-		{
-			ret += ft_putchar(*format);
-			++format;
-		}
+			ret += ft_putchar(*(format++));
 	}
 	va_end(ap);
 	return (ret);
-}
-
-#include <stdio.h>
-
-int		main ()
-{
-	char c = 'c';
-	int n = 654321;
-	char *str = "apple";
-	void *ptr = malloc(1);
-
-	printf("%10d\n", n);
-	int d = ft_printf("%10d\n", n);
-	printf("%d\n", d);
-	ft_printf("===============\n");
-
-	printf("%010p\n", ptr);
-	ft_printf("%010p\n", ptr);
-	ft_printf("===============\n");
-
-	printf("%10.4s\n", str);
-	ft_printf("%10.4s\n", str);
-	ft_printf("===============\n");
-
-	printf("%10.7d\n", n);
-	ft_printf("%10.7d\n", n);
-	ft_printf("===============\n");
-
-	printf("%-10.7d\n", n);
-	ft_printf("%-10.7d\n", n);
-	ft_printf("===============\n");
-
-	printf("%0*.*d\n", 10, 7, n);
-	ft_printf("%0*.*d\n", 10, 7, n);
-	ft_printf("===============\n");
-
-	printf("%10.-7d\n", n);
-	ft_printf("%10.-7d\n", n);
-	ft_printf("===============\n");
-
-
-	return 0;
 }

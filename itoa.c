@@ -6,7 +6,7 @@
 /*   By: taejkim <taejkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 12:09:53 by taejkim           #+#    #+#             */
-/*   Updated: 2021/06/08 13:06:04 by taejkim          ###   ########.fr       */
+/*   Updated: 2021/06/09 04:26:08 by taejkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static int	get_size_dec(unsigned long long n)
 {
 	int		ret;
-	
+
 	if (n == 0)
 		return (1);
 	ret = 0;
@@ -30,7 +30,7 @@ static int	get_size_dec(unsigned long long n)
 static int	get_size_hex(unsigned long long n)
 {
 	int		ret;
-	
+
 	if (n == 0)
 		return (1);
 	ret = 0;
@@ -81,7 +81,7 @@ static void	assign_str_hex(char *str, unsigned long long n, int size, char type)
 	}
 }
 
-char	*ft_itoa(unsigned long long n, int *len, char type)
+char		*ft_itoa(unsigned long long n, int *len, char type)
 {
 	char	*ret;
 	int		size;
@@ -96,7 +96,7 @@ char	*ft_itoa(unsigned long long n, int *len, char type)
 		return (NULL);
 	}
 	if (type == 'i' || type == 'd' || type == 'u')
-		assign_str_dec(ret, n, size);	
+		assign_str_dec(ret, n, size);
 	else if (type == 'x' || type == 'X' || type == 'p')
 		assign_str_hex(ret, n, size, type);
 	*len = size;
