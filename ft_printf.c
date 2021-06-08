@@ -74,7 +74,7 @@ char	*ft_strchr(const char *s, int c)
 	return (0);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	char	*ptr;
 	size_t	len;
@@ -232,25 +232,23 @@ int		print_char(char c, t_info *info)
 	return (ret);
 }
 
-int		cut_str(char *str, t_info *info)
+char	*cut_str(char *str, t_info *info)
 {
-	int 	ret;
-	int 	i;
+	char* 	ret;
+	int		len;
+	int		i;
 
-	ret = 0;
-	if (info->prec_state != -1)
+	len = ft_strlen(str);
+	if (info->prec_state != -1 && info->prec < len)
+		len = info->prec;
+	ret = (char *)malloc(sizeof(char) * (len + 1));
+	i = 0;
+	while (i < len)
 	{
-		i = 0;
-		while (str)
-		{
-			++i;
-			if (i > info->prec)
-				*str = 0;
-			else
-				++ret;
-			++str;
-		}
+		ret[i] = str[i];
+		++i;
 	}
+	ret[i] = 0;
 	return (ret);
 }
 
@@ -260,13 +258,10 @@ int		print_str(char *str, t_info *info)
 	int		len;
 
 	ret = 0;
-	len = cut_str(str, info);
+	str = cut_str(str, info);
+	len = ft_strlen(str);
 	if (info->sign == 1)
-	{
-		while (str)
-			// 이거 가능?
-			ret += ft_putchar(*(str++));
-	}
+		ret += ft_putstr(str);
 	while (++len <= info->width)
 	{
 		if (info->zero == 0)
@@ -275,32 +270,26 @@ int		print_str(char *str, t_info *info)
 			ret += ft_putchar('0');
 	}
 	if (info->sign == 0)
-	{
-		while (str)
-			ret += ft_putchar(*(str++));
-	}
+		ret += ft_putstr(str);
+	ft_free(&str);
 	return (ret);
 }
 
 char 	*make_padding(char c, int size)
 {
 	char	*ret;
+	int		i;
 
-	if (size > 0)
+	if (size < 0)
+		size = 0;
+	ret = (char *)malloc(sizeof(char) * (size + 1));
+	i = 0;
+	while (i < size)
 	{
-		ret = (char *)malloc(size + 1);
-		while (ret)
-		{
-			*ret = c;
-			++ret;
-		}
-		*ret = 0;
+		ret[i] = c;
+		++i;
 	}
-	else
-	{
-		ret = (char *)malloc(1);
-		*ret = 0;
-	}
+	ret[i] = 0;
 	return (ret);
 }
 
@@ -308,6 +297,7 @@ int		print_neg_num(char *str, int len, t_info *info)
 {
 	int		ret;
 
+	ret = 0;
 	if (info->zero == 1)
 	{
 		ret += ft_putchar('-');
@@ -317,7 +307,10 @@ int		print_neg_num(char *str, int len, t_info *info)
 	else
 	{
 		if (info->prec_state != -1)
+		{
 			str = ft_strjoin(make_padding('0', info->prec - len), str);
+			len = ft_strlen(str);
+		}
 		str = ft_strjoin("-", str);
 		if (info->sign == 1)
 			str = ft_strjoin(str, make_padding(' ', info->width - (len + 1)));
@@ -325,7 +318,7 @@ int		print_neg_num(char *str, int len, t_info *info)
 			str = ft_strjoin(make_padding(' ', info->width - (len + 1)), str);
 		ret += ft_putstr(str);
 	}
-	ft_free(str);
+	ft_free(&str);
 	return (ret);
 }
 
@@ -333,6 +326,7 @@ int		print_pos_num(char *str, int len, t_info *info)
 {
 	int		ret;
 
+	ret = 0;
 	if (info->zero == 1)
 	{
 		str = ft_strjoin(make_padding('0', info->width - len), str);
@@ -341,14 +335,17 @@ int		print_pos_num(char *str, int len, t_info *info)
 	else
 	{
 		if (info->prec_state != -1)
+		{
 			str = ft_strjoin(make_padding('0', info->prec - len), str);
+			len = ft_strlen(str);
+		}
 		if (info->sign == 1)
 			str = ft_strjoin(str, make_padding(' ', info->width - len));
 		else
 			str = ft_strjoin(make_padding(' ', info->width - len), str);
 		ret += ft_putstr(str);
 	}
-	ft_free(str);
+	ft_free(&str);
 	return (ret);
 }
 
@@ -422,7 +419,7 @@ int		spec_print(va_list ap, t_info *info)
 	if (type == '%')
 		ret = print_char('%', info);
 	else if (type == 'c')
-		ret = print_char(va_arg(ap, char), info);
+		ret = print_char(va_arg(ap, int), info);
 	else if (type == 's')
 		ret = print_str(va_arg(ap, char*), info);
 	else if (type == 'd' || type == 'i')
@@ -449,7 +446,7 @@ void	set_width(char *format, va_list ap, t_info *info)
 {
 	if (*format == '*')
 	{
-		if (info->width = va_arg(ap, int) < 0)
+		if ((info->width = va_arg(ap, int)) < 0)
 		{
 			info->sign = 1;
 			info->width *= -1;
@@ -460,7 +457,7 @@ void	set_width(char *format, va_list ap, t_info *info)
 		if (ft_isdigit(*(format - 1)))
 			info->width = (info->width * 10) + (*format - '0');
 		else
-			info->width = *format; 	
+			info->width = *format - '0'; 	
 	}
 }
 
@@ -468,7 +465,7 @@ void	set_prec(char *format, va_list ap, t_info *info)
 {
 	if (*format == '*' && info->prec_state == 0)
 	{
-		if (info->prec = va_arg(ap, int) < 0)
+		if ((info->prec = va_arg(ap, int)) < 0)
 		{
 			info->sign = 1;
 			info->prec_state = -1;
@@ -479,7 +476,7 @@ void	set_prec(char *format, va_list ap, t_info *info)
 		if (ft_isdigit(*(format - 1)))
 			info->prec = (info->prec * 10) + (*format - '0');
 		else if (info->prec_state == 0)
-			info->prec = *format;
+			info->prec = *format - '0';
 	}
 	info->prec_state = 1;
 }
@@ -508,17 +505,14 @@ void	set_info(char *format, va_list ap, t_info *info)
 		set_width_prec(format, ap, info);
 }
 
-int		spec_check(char** ptr, va_list ap)
+int		spec_check(char* format, va_list ap, char **next)
 {
 	int		ret;
-	char	*format;
 	t_info	*info;
 
-	// 여기 malloc 에러처리 어떻게?
 	if (!(info = (t_info *)malloc(sizeof(t_info))))
 		return (-1);
 	init_info(info);
-	format = *ptr;	
 	while (*format)
 	{	
 		if (ft_strchr(TYPE, *format))
@@ -526,15 +520,15 @@ int		spec_check(char** ptr, va_list ap)
 			info->type = *format;
 			info_exception(info);
 			ret = spec_print(ap, info);
-			*ptr = format + 1;
-			ft_free(info);
+			free(info);
+			*next = format + 1;
 			return (ret);
 		}
 		else 
 			set_info(format, ap, info);
 		++format;	
 	}
-	ft_free(info);
+	free(info);
 	return (-1);
 }
 
@@ -543,7 +537,8 @@ int		ft_printf(const char* format, ...)
 	int		ret;
 	int		spec_print;
 	va_list	ap;
-	
+	char	*next;
+
 	ret = 0;
 	va_start(ap, format);
 	while (*format)
@@ -551,9 +546,12 @@ int		ft_printf(const char* format, ...)
 		if (*format == '%')
 		{
 			++format;
-			spec_print = spec_check(&format, ap);
+			spec_print = spec_check((char *)format, ap, &next);
 			if (spec_print != -1)
+			{
 				ret += spec_print;
+				format = next;
+			}
 		}
 		else
 		{
@@ -569,12 +567,40 @@ int		ft_printf(const char* format, ...)
 
 int		main ()
 {
-	int n = 1329940101;
-	int len;
-	char *str = ft_itoa(n, &len, 'X');
+	char c = 'c';
+	int n = 654321;
+	char *str = "apple";
+	void *ptr = malloc(1);
 
-	printf("%s", str);
-	printf("\n%d", len);
+	printf("%10d\n", n);
+	int d = ft_printf("%10d\n", n);
+	printf("%d\n", d);
+	ft_printf("===============\n");
+
+	printf("%010p\n", ptr);
+	ft_printf("%010p\n", ptr);
+	ft_printf("===============\n");
+
+	printf("%10.4s\n", str);
+	ft_printf("%10.4s\n", str);
+	ft_printf("===============\n");
+
+	printf("%10.7d\n", n);
+	ft_printf("%10.7d\n", n);
+	ft_printf("===============\n");
+
+	printf("%-10.7d\n", n);
+	ft_printf("%-10.7d\n", n);
+	ft_printf("===============\n");
+
+	printf("%0*.*d\n", 10, 7, n);
+	ft_printf("%0*.*d\n", 10, 7, n);
+	ft_printf("===============\n");
+
+	printf("%10.-7d\n", n);
+	ft_printf("%10.-7d\n", n);
+	ft_printf("===============\n");
+
 
 	return 0;
 }

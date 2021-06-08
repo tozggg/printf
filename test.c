@@ -61,6 +61,24 @@ char	*ft_itoa(long long n, int *len)
 	return (ret);
 }
 
+char 	*make_padding(char c, int size)
+{
+	char	*ret;
+	int		i;
+
+	if (size < 0)
+		size = 0;
+	ret = (char *)malloc(sizeof(char) * (size + 1));
+	i = 0;
+	while (i < size)
+	{
+		ret[i] = c;
+		++i;
+	}
+	ret[i] = 0;
+	return (ret);
+}
+
 int		main()
 {
 	int num = -50000;
@@ -81,7 +99,8 @@ int		main()
 
 	printf("========================\n");
 
-	printf("%-08.4d", -543);
+	char *strr = make_padding('0', 5);
+	printf("\n%s\n", strr);
 
 	return 0;
 }
