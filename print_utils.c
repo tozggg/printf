@@ -6,7 +6,7 @@
 /*   By: taejkim <taejkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 04:03:44 by taejkim           #+#    #+#             */
-/*   Updated: 2021/06/09 04:31:31 by taejkim          ###   ########.fr       */
+/*   Updated: 2021/06/09 10:24:44 by taejkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ char	*cut_str(char *str, t_info *info)
 	len = ft_strlen(str);
 	if (info->prec_state != -1 && info->prec < len)
 		len = info->prec;
-	ret = (char *)malloc(sizeof(char) * (len + 1));
+	if (!(ret = (char *)malloc(sizeof(char) * (len + 1))))
+		return (NULL);
 	i = 0;
 	while (i < len)
 	{
