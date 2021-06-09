@@ -6,7 +6,7 @@
 #    By: taejkim <taejkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/08 13:17:17 by taejkim           #+#    #+#              #
-#    Updated: 2021/06/09 04:38:48 by taejkim          ###   ########.fr        #
+#    Updated: 2021/06/09 10:03:20 by taejkim          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME = libftprintf.a
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra
 AR = ar -rcs
-RM = rm -fr
+RM = rm -f
 
 SRCS = ft_printf.c set_info.c \
 		print_num.c print_text.c print_utils.c\
