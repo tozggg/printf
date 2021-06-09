@@ -6,7 +6,7 @@
 /*   By: taejkim <taejkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 12:09:57 by taejkim           #+#    #+#             */
-/*   Updated: 2021/06/09 04:28:41 by taejkim          ###   ########.fr       */
+/*   Updated: 2021/06/09 09:38:16 by taejkim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ static int	print_neg_num(char *str, int len, t_info *info)
 		}
 		str = ft_strjoin(make_padding('-', 1), str);
 		if (info->sign == 1)
-			str = ft_strjoin(str, make_padding(' ', info->width - (len + 1)));
+			str = ft_strjoin(str, make_padding(' ', info->width - len - 1));
 		else
-			str = ft_strjoin(make_padding(' ', info->width - (len + 1)), str);
+			str = ft_strjoin(make_padding(' ', info->width - len - 1), str);
 		ret += ft_putstr(str);
 	}
 	ft_free(&str);
